@@ -24,7 +24,7 @@ defmodule MixDocker do
     end
   end
 
-  def release(args) do
+  def release(_args) do
     image = image_name
 
     with_dockerfile @dockerfile_release, fn ->
