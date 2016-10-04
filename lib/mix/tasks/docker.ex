@@ -24,6 +24,15 @@ defmodule Mix.Tasks.Docker.Release do
   defdelegate run(args), to: MixDocker, as: :release
 end
 
+defmodule Mix.Tasks.Docker.Publish do
+  use Mix.Task
+
+  @shortdoc "Publish current image to docker registry"
+  @preferred_cli_env :prod
+
+  defdelegate run(args), to: MixDocker, as: :publish
+end
+
 defmodule Mix.Tasks.Docker.Shipit do
   use Mix.Task
 
