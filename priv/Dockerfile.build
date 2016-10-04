@@ -33,6 +33,6 @@ RUN mix do deps.get, deps.compile
 
 COPY . .
 
-RUN mix release --verbose
+RUN mix release --env=prod --verbose
 
 WORKDIR /opt/app
