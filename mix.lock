@@ -1,1 +1,1 @@
-%{"distillery": {:hex, :distillery, "0.10.0", "4404b8e7b524de3649b3135a39921ace31f0f6216bba51964c836e83b29efe94", [:mix], []}}
+%{"distillery": {:hex, :distillery, "0.9.0", "dc29d226273533720d5f7ab5ed4d76166402b69132effdd1ec977dfb33554627", [:mix], []}}

@@ -15,6 +15,6 @@ defmodule MixDocker.Mixfile do
   end
 
   defp deps do
-    [{:distillery, "~> 0.9"}]
+    [{:distillery, "0.9.0"}] # see https://github.com/bitwalker/distillery/issues/96
   end
 end
