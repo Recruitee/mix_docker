@@ -1,15 +1,8 @@
-FROM bitwalker/alpine-erlang:latest
+FROM bitwalker/alpine-erlang:6.1
 
-# Important!  Update this no-op ENV variable when this Dockerfile
-# is updated with the current date. It will force refresh of all
-# of the base images and things like `apt-get update` won't be using
-# old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT=2016-08-13 \
-    HOME=/opt/app/ \
-    # Set this so that CTRL+G works properly
-    TERM=xterm
+ENV HOME=/opt/app/ TERM=xterm
 
-# Install Elixir
+# Install Elixir and basic build dependencies
 RUN \
     echo "@edge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk update && \
@@ -24,7 +17,6 @@ RUN mix local.hex --force && \
 
 WORKDIR /opt/app
 
-# Set exposed ports
 ENV MIX_ENV=prod
 
 # Cache elixir deps
@@ -34,5 +26,3 @@ RUN mix do deps.get, deps.compile
 COPY . .
 
 RUN mix release --env=prod --verbose
-
-WORKDIR /opt/app

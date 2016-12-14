@@ -9,33 +9,41 @@ defmodule MixDocker do
     Mix.Task.run("release.init", args)
   end
 
-  def build(_args) do
+  def build(args) do
+    with_dockerfile @dockerfile_build, fn ->
+      docker :build, @dockerfile_build, image(:build), args
+    end
+
+    Mix.shell.info "Docker image #{image(:build)} has been successfully created"
+  end
+
+  def release(args) do
     project = Mix.Project.get.project
     app     = project[:app]
     version = project[:version]
-    image   = "build-#{git_head_sha}"
 
-    with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, "build"
-      docker :rm, image
-      docker :create, image, "build"
-      docker :cp, image, "/opt/app/rel/#{app}/releases/#{version}/#{app}.tar.gz", "#{app}.tar.gz"
-      docker :rm, image
-    end
-  end
-
-  def release(_args) do
-    image = image_name
+    cid = "mix_docker-#{:rand.uniform(1000000)}"
 
     with_dockerfile @dockerfile_release, fn ->
-      docker :build, @dockerfile_release, image
+      docker :rm, cid
+      docker :create, cid, image(:build)
+      docker :cp, cid, "/opt/app/rel/#{app}/releases/#{version}/#{app}.tar.gz", "#{app}.tar.gz"
+      docker :rm, cid
+      docker :build, @dockerfile_release, image(:release), args
     end
 
-    Mix.shell.info "Docker image #{image} has been successfully created"
+    Mix.shell.info "Docker image #{image(:release)} has been successfully created"
+    Mix.shell.info "You can now test your app with the following command:"
+    Mix.shell.info "  docker run -it --rm #{image(:release)} foreground"
   end
 
   def publish(_args) do
-    docker :push, image_name
+    name = image(:version)
+
+    docker :tag, image(:release), name
+    docker :push, name
+
+    Mix.shell.info "Docker image #{name} has been successfully created"
   end
 
   def shipit(args) do
@@ -54,33 +62,38 @@ defmodule MixDocker do
     String.trim(count)
   end
 
-  defp image_name do
-    project = Mix.Project.get.project
-    app     = project[:app]
-    version = project[:version]
-
-    name  = Application.get_env(:mix_docker, :image, to_string(app))
-
-    count = git_commit_count
-    sha   = git_head_sha
-
-    "#{name}:#{version}.#{count}-#{sha}"
+  defp image(tag) do
+    image_name <> ":" <> to_string(image_tag(tag))
   end
+
+  defp image_name do
+    Application.get_env(:mix_docker, :image) || to_string(Mix.Project.get.project[:app])
+  end
+
+  defp image_tag(:version) do
+    version = Mix.Project.get.project[:app][:version]
+    count   = git_commit_count
+    sha     = git_head_sha
+
+    "#{version}.#{count}-#{sha}"
+  end
+  defp image_tag(tag), do: tag
+
 
   defp docker(:cp, cid, source, dest) do
     system! "docker", ["cp", "#{cid}:#{source}", dest]
   end
 
-  defp docker(:build, dockerfile, tag) do
-    system! "docker", ["build", "-f", dockerfile, "-t", tag, "."]
+  defp docker(:build, dockerfile, tag, args) do
+    system! "docker", ["build", "-f", dockerfile, "-t", tag] ++ args ++ ["."]
   end
 
   defp docker(:create, name, image) do
     system! "docker", ["create", "--name", name, image]
   end
 
-  defp docker(:rm, image) do
-    system "docker", ["rm", "-f", image]
+  defp docker(:rm, cid) do
+    system "docker", ["rm", "-f", cid]
   end
 
   defp docker(:push, image) do
