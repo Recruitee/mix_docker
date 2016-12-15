@@ -11,7 +11,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:mix_docker, "~> 0.1.0"}]
+      [{:mix_docker, "~> 0.2.0"}]
     end
     ```
 
@@ -26,11 +26,14 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ## Usage
 
-### Build release
+### Build a release
 Run `mix docker.build` to build a release inside docker container
 
-### Create run container
+### Create minimal run container
 Run `mix docker.release` to put the release inside minimal docker image
 
 ### Publish to docker registry
 Run `mix docker.publish` to push newly created image to docker registry
+
+### All three in one pass
+Run `mix docker.shipit`
