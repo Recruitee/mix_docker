@@ -4,8 +4,14 @@ defmodule MixDocker do
   @dockerfile_path    :code.priv_dir(:mix_docker)
   @dockerfile_build   "Dockerfile.build"
   @dockerfile_release "Dockerfile.release"
+  @dockerignore       ".dockerignore"
 
   def init(args) do
+    # copy .dockerignore
+    unless File.exists?(@dockerignore) do
+      File.cp(Path.join([@dockerfile_path, @dockerignore]), @dockerignore)
+    end
+
     Mix.Task.run("release.init", args)
   end
 
