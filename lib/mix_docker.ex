@@ -105,6 +105,10 @@ defmodule MixDocker do
     system! "docker", ["push", image]
   end
 
+  defp docker(:tag, image, tag) do
+    system! "docker", ["tag", image, tag]
+  end
+
 
   defp with_dockerfile(name, fun) do
     if File.exists?(name) do
