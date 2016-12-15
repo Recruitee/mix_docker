@@ -2,7 +2,36 @@ defmodule MixDockerTest do
   use ExUnit.Case
   doctest MixDocker
 
-  test "the truth" do
-    assert 1 + 1 == 2
+  @appdir "test-app"
+  defmacro inapp(do: body) do
+    quote do
+      File.cd!(@appdir, fn -> unquote(body) end)
+    end
+  end
+
+  def mix(task, args \\ []) do
+    IO.puts "$ mix #{task}"
+    assert {_, 0} = System.cmd("mix", [task | args], into: IO.stream(:stdio, :line))
+  end
+
+  setup do
+    inapp do
+      mix "deps.get"
+    end
+
+    :ok
+  end
+
+  test "everything" do
+    inapp do
+      mix "docker.init"
+
+      assert File.exists?(".dockerignore")
+      assert File.exists?("rel/config.exs")
+
+      mix "docker.build"
+
+      mix "docker.release"
+    end
   end
 end
