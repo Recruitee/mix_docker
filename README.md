@@ -9,7 +9,7 @@ Based on distillery releases.
 
     ```elixir
     def deps do
-      [{:mix_docker, "~> 0.2.0"}]
+      [{:mix_docker, "~> 0.2.1"}]
     end
     ```
 
