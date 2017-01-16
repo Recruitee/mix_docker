@@ -16,6 +16,11 @@ defmodule MixDockerTest do
 
   setup do
     inapp do
+      File.rm_rf "rel"
+      File.rm_rf "app.tar.gz"
+      File.rm_rf "deps"
+      File.rm_rf "mix.lock"
+
       mix "deps.get"
     end
 
