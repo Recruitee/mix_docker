@@ -97,16 +97,16 @@ defmodule MixDocker do
     system! "docker", ["create", "--name", name, image]
   end
 
+  defp docker(:tag, image, tag) do
+    system! "docker", ["tag", image, tag]
+  end
+
   defp docker(:rm, cid) do
     system "docker", ["rm", "-f", cid]
   end
 
   defp docker(:push, image) do
     system! "docker", ["push", image]
-  end
-
-  defp docker(:tag, image, tag) do
-    system! "docker", ["tag", image, tag]
   end
 
 
