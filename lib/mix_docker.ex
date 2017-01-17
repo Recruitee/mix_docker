@@ -57,6 +57,11 @@ defmodule MixDocker do
     publish(args)
   end
 
+  def customize([]) do
+    try_copy_dockerfile @dockerfile_build
+    try_copy_dockerfile @dockerfile_release
+  end
+
   defp git_head_sha do
     {sha, 0} = System.cmd "git", ["rev-parse", "HEAD"]
     String.slice(sha, 0, 10)
@@ -109,23 +114,33 @@ defmodule MixDocker do
     system! "docker", ["push", image]
   end
 
-
   defp with_dockerfile(name, fun) do
     if File.exists?(name) do
       fun.()
     else
-      app = Mix.Project.get.project[:app]
-
       try do
-        content = [@dockerfile_path, name]
-          |> Path.join
-          |> File.read!
-          |> String.replace("${APP}", to_string(app))
-        File.write!(name, content)
+        copy_dockerfile(name)
         fun.()
       after
         File.rm(name)
       end
+    end
+  end
+
+  defp copy_dockerfile(name) do
+    app = Mix.Project.get.project[:app]
+    content = [@dockerfile_path, name]
+      |> Path.join
+      |> File.read!
+      |> String.replace("${APP}", to_string(app))
+    File.write!(name, content)
+  end
+
+  defp try_copy_dockerfile(name) do
+    if File.exists?(name) do
+      Logger.warn("#{name} already exists")
+    else
+      copy_dockerfile(name)
     end
   end
 

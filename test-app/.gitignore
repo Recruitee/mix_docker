@@ -21,3 +21,5 @@ app.tar.gz
 /rel
 .dockerignore
 mix.lock
+Dockerfile.build
+Dockerfile.release

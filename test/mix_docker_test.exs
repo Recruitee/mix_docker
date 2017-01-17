@@ -39,4 +39,13 @@ defmodule MixDockerTest do
       mix "docker.release"
     end
   end
+
+  test "customize" do
+    inapp do
+      mix "docker.customize"
+
+      assert File.exists?("Dockerfile.build")
+      assert File.exists?("Dockerfile.release")
+    end
+  end
 end

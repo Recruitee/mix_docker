@@ -16,8 +16,10 @@ defmodule App.Mixfile do
 
   defp deps do
     [
-      # can't use path since it will be unavailable inside docker container
-      {:mix_docker, github: "recruitee/mix_docker", branch: "master"}
+      case Mix.env do
+        :dev  -> {:mix_docker, path: ".."}
+        :prod -> {:mix_docker, github: "recruitee/mix_docker", branch: "master"}
+      end
     ]
   end
 end

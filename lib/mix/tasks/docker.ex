@@ -41,3 +41,12 @@ defmodule Mix.Tasks.Docker.Shipit do
 
   defdelegate run(args), to: MixDocker, as: :shipit
 end
+
+defmodule Mix.Tasks.Docker.Customize do
+  use Mix.Task
+
+  @shortdoc "Copy & customize Dockerfiles"
+  @preferred_cli_env :prod
+
+  defdelegate run(args), to: MixDocker, as: :customize
+end
