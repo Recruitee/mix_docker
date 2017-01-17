@@ -15,11 +15,6 @@ defmodule App.Mixfile do
   end
 
   defp deps do
-    [
-      case Mix.env do
-        :prod -> {:mix_docker, github: "recruitee/mix_docker", branch: "master"}
-        _     -> {:mix_docker, path: ".."}
-      end
-    ]
+    [{:mix_docker, github: "recruitee/mix_docker", branch: "master"}]
   end
 end

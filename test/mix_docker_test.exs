@@ -20,6 +20,8 @@ defmodule MixDockerTest do
       File.rm_rf "app.tar.gz"
       File.rm_rf "deps"
       File.rm_rf "mix.lock"
+      File.rm_rf "Dockerfile.build"
+      File.rm_rf "Dockerfile.release"
 
       mix "deps.get"
     end
