@@ -1,6 +1,6 @@
 # mix docker
 
-[![Build Status](https://travis-ci.org/recruitee/mix_docker.svg?branch=master)](https://travis-ci.org/recruitee/mix_docker)
+[![Build Status](https://travis-ci.org/Recruitee/mix_docker.svg?branch=master)](https://travis-ci.org/Recruitee/mix_docker)
 
 Put your Elixir app inside minimal Docker image.
 Based on [alpine linux](https://hub.docker.com/r/bitwalker/alpine-erlang/)
