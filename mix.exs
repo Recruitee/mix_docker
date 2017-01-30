@@ -4,14 +4,14 @@ defmodule MixDocker.Mixfile do
   def project do
     [
       app: :mix_docker,
-      version: "0.3.1",
-      elixir: "~> 1.3",
+      version: "0.4.0",
+      elixir: ">= 1.3.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      deps: deps,
+      deps: deps(),
 
-      description: description,
-      package: package,
+      description: description(),
+      package: package(),
 
       source_url: "https://github.com/recruitee/mix_docker",
       docs: [main: "readme", extras: ["README.md"]]

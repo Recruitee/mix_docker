@@ -1,4 +1,7 @@
-FROM bitwalker/alpine-erlang:6.1
+# No need to have Elixir language installed in the release image,
+# but we use the elixir image as base anyway - to make sure build image
+# and release image use the same version of Erlang.
+FROM bitwalker/alpine-elixir
 
 RUN apk update && \
     apk --no-cache --update add libgcc libstdc++ && \
