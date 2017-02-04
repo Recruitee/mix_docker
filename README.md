@@ -32,6 +32,7 @@ and [distillery](https://github.com/bitwalker/distillery) releases.
 
 - [Getting Started Tutorial](http://teamon.eu/2017/deploying-phoenix-to-production-using-docker/)
 - [Setting up cluster with Rancher](http://teamon.eu/2017/setting-up-elixir-cluster-using-docker-and-rancher/)
+- [Phoenix App Configuration Walkthrough](https://shovik.com/blog/8-deploying-phoenix-apps-with-docker)
 
 ## Usage
 
@@ -87,3 +88,52 @@ Now you can add whatever you like using standard Dockerfile commands.
 Feel free to add some more apk packages or run some custom commands.
 TIP: To keep the build process efficient check whether a given package is required only for
 compilation (build) or runtime (release) or both.
+
+
+#### How to configure a Phoenix app?
+
+To run a Phoenix app you'll need to install additional packages into the build image: run `mix docker.customize`.
+
+Modify the `apk --no-cache --update add` command in the `Dockerfile.build` as follows (add `nodejs` and `python`):
+
+```
+# Install Elixir and basic build dependencies
+RUN \
+    echo "@edge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    apk update && \
+    apk --no-cache --update add \
+      git make g++ \
+      nodejs python \
+      elixir@edge && \
+    rm -rf /var/cache/apk/*
+```
+
+Install nodejs dependencies and cache them by adding the following lines before the `COPY` command:
+
+```
+# Cache node deps
+COPY package.json ./
+RUN npm install
+```
+
+Build and digest static assets by adding the following lines after the `COPY` command:
+
+```
+RUN ./node_modules/brunch/bin/brunch b -p && \
+    mix phoenix.digest
+```
+
+Add the following directories to `.dockerignore`:
+
+```
+node_modules
+priv/static
+```
+
+Remove `config/prod.secret.exs` file and remove a reference to it from `config/prod.exs`. Configure your app's secrets directly in `config/prod.exs` using the environment variables.
+
+Make sure to add `server: true` to your app's Endpoint config.
+
+Build the images and run the release image normally.
+
+Check out [this post](https://shovik.com/blog/8-deploying-phoenix-apps-with-docker) for detailed walkthrough of the Phoenix app configuration.
