@@ -73,7 +73,7 @@ defmodule MixDocker do
   end
 
   defp image(tag) do
-    image_name <> ":" <> to_string(image_tag(tag))
+    image_name() <> ":" <> to_string(image_tag(tag))
   end
 
   defp image_name do
@@ -82,8 +82,8 @@ defmodule MixDocker do
 
   defp image_tag(:version) do
     version = Mix.Project.get.project[:version]
-    count   = git_commit_count
-    sha     = git_head_sha
+    count   = git_commit_count()
+    sha     = git_head_sha()
 
     "#{version}.#{count}-#{sha}"
   end
