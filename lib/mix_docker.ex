@@ -2,8 +2,8 @@ defmodule MixDocker do
   require Logger
 
   @dockerfile_path    :code.priv_dir(:mix_docker)
-  @dockerfile_build   "Dockerfile.build"
-  @dockerfile_release "Dockerfile.release"
+  @dockerfile_build   Application.get_env(:mix_docker, :dockerfile_build, "Dockerfile.build")
+  @dockerfile_release Application.get_env(:mix_docker, :dockerfile_release, "Dockerfile.release")
 
   def init(args) do
     # copy .dockerignore

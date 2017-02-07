@@ -63,7 +63,7 @@ like this:
 ```elixir
 config :hello, Hello.Endpoint,
   server: true,
-  url: [host: "${DOMAIN}"]    
+  url: [host: "${DOMAIN}"]
 
 config :hello, Hello.Mailer,
   adapter: Bamboo.MailgunAdapter,
@@ -88,6 +88,20 @@ Now you can add whatever you like using standard Dockerfile commands.
 Feel free to add some more apk packages or run some custom commands.
 TIP: To keep the build process efficient check whether a given package is required only for
 compilation (build) or runtime (release) or both.
+
+#### How to move the Dockerfiles?
+
+You can specify where to find the two Dockerfiles in the config.
+
+```elixir
+# config/config.exs
+config :mix_docker,
+  dockerfile_build: "path/to/Dockerfile.build",
+  dockerfile_release: "path/to/Dockerfile.release"
+```
+
+The path is relative to the project root, and the files must be located inside
+the root.
 
 
 #### How to configure a Phoenix app?
