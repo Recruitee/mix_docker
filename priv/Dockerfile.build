@@ -1,14 +1,12 @@
-FROM bitwalker/alpine-erlang:6.1
+# Using alpine-elixir instead of alpine-erlang here
+# because Elixir 1.4 is not yet available in Alpine
+# community packages.
+FROM bitwalker/alpine-elixir
 
 ENV HOME=/opt/app/ TERM=xterm
 
-# Install Elixir and basic build dependencies
-RUN \
-    echo "@edge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    apk update && \
-    apk --no-cache --update add \
-      git make g++ \
-      elixir@edge && \
+RUN apk update && \
+    apk --no-cache --update add git make g++ && \
     rm -rf /var/cache/apk/*
 
 # Install Hex+Rebar
