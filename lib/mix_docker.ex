@@ -23,9 +23,8 @@ defmodule MixDocker do
   end
 
   def release(args) do
-    project = Mix.Project.get.project
-    app     = project[:app]
-    version = project[:version]
+    app     = app_name()
+    version = app_version()
 
     cid = "mix_docker-#{:rand.uniform(1000000)}"
 
@@ -77,7 +76,7 @@ defmodule MixDocker do
   end
 
   defp image_name do
-    Application.get_env(:mix_docker, :image) || to_string(Mix.Project.get.project[:app])
+    Application.get_env(:mix_docker, :image) || to_string(app_name())
   end
 
   defp image_tag(:version) do
@@ -128,7 +127,7 @@ defmodule MixDocker do
   end
 
   defp copy_dockerfile(name) do
-    app = Mix.Project.get.project[:app]
+    app = app_name()
     content = [@dockerfile_path, name]
       |> Path.join
       |> File.read!
@@ -151,5 +150,14 @@ defmodule MixDocker do
 
   defp system!(cmd, args) do
     {_, 0} = system(cmd, args)
+  end
+
+  defp app_name do
+    release_name_from_cwd = File.cwd! |> Path.basename |> String.replace("-", "_")
+    Mix.Project.get.project[:app] || release_name_from_cwd
+  end
+
+  defp app_version do
+    Mix.Project.get.project[:version] || "0.1.0"
   end
 end

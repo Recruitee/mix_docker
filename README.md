@@ -104,6 +104,29 @@ The path is relative to the project root, and the files must be located inside
 the root.
 
 
+#### How to configure an Umbrella app?
+
+The default build Dockerfile does not handle the installation of umbrella app
+deps, so you will need to modify it to match the structure of your project.
+
+Run `mix docker.customize` and then edit `Dockerfile.build` to copy across
+each of your umbrella's applications.
+
+```dockerfile
+COPY mix.exs mix.lock ./
+
+RUN mkdir -p apps/my_first_app/config
+COPY apps/my_first_app/mix.exs apps/my_first_app/
+COPY apps/my_first_app/config/* apps/my_first_app/config/
+
+RUN mkdir -p apps/my_second_app/config
+COPY apps/my_second_app/mix.exs apps/my_second_app/
+COPY apps/my_second_app/config/* apps/my_second_app/config/
+
+# etc.
+```
+
+
 #### How to configure a Phoenix app?
 
 To run a Phoenix app you'll need to install additional packages into the build image: run `mix docker.customize`.
