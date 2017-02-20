@@ -2,9 +2,15 @@ FROM alpine:3.5
 
 RUN apk --no-cache add ncurses-libs
 
+WORKDIR /opt/app/
+
 EXPOSE 4000
 ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true
 
 ADD ${APP}.tar.gz ./
+
+RUN adduser -S default
+RUN chown -R default .
+USER default
 
 ENTRYPOINT ["/opt/app/bin/${APP}"]
