@@ -42,8 +42,8 @@ defmodule MixDocker do
     Mix.shell.info "  docker run -it --rm #{image(:release)} foreground"
   end
 
-  def publish(_args) do
-    name = image(:version)
+  def publish(args) do
+    name = image(version: image_version(args))
 
     docker :tag, image(:release), name
     docker :push, name
@@ -63,13 +63,21 @@ defmodule MixDocker do
   end
 
   defp git_head_sha do
-    {sha, 0} = System.cmd "git", ["rev-parse", "HEAD"]
-    String.slice(sha, 0, 10)
+    with true <- File.regular?(".git"),
+         {sha, 0} <- System.cmd("git", ["rev-parse", "HEAD"]) do
+      String.slice(sha, 0, 10)
+    else
+      _ -> nil
+    end
   end
 
   defp git_commit_count do
-    {count, 0} = System.cmd "git", ["rev-list", "--count", "HEAD"]
-    String.trim(count)
+    with true <- File.regular?(".git"),
+         {count, 0} <- System.cmd("git", ["rev-list", "--count", "HEAD"]) do
+      String.trim(count)
+    else
+      _ -> nil
+    end
   end
 
   defp image(tag) do
@@ -80,15 +88,19 @@ defmodule MixDocker do
     Application.get_env(:mix_docker, :image) || to_string(Mix.Project.get.project[:app])
   end
 
-  defp image_tag(:version) do
+  defp image_tag(version: version_template) do
     version = Mix.Project.get.project[:version]
     count   = git_commit_count()
     sha     = git_head_sha()
 
-    "#{version}.#{count}-#{sha}"
+    Code.eval_string(version_template, mix_version: version, git_count: count, git_sha: sha) |> elem(0)
   end
   defp image_tag(tag), do: tag
 
+  defp image_version(args) do
+    version = (OptionParser.parse(args) |> elem(0) |> Keyword.get(:version, Application.get_env(:mix_docker, :version, "\#{mix_version}.\#{git_count}-\#{git_sha}")))
+    "\"" <> version <> "\""
+  end
 
   defp docker(:cp, cid, source, dest) do
     system! "docker", ["cp", "#{cid}:#{source}", dest]
