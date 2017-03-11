@@ -67,7 +67,7 @@ defmodule MixDocker do
          {sha, 0} <- System.cmd("git", ["rev-parse", "HEAD"]) do
       String.slice(sha, 0, 10)
     else
-      _ -> nil
+      _ -> ""
     end
   end
 
@@ -76,7 +76,7 @@ defmodule MixDocker do
          {count, 0} <- System.cmd("git", ["rev-list", "--count", "HEAD"]) do
       String.trim(count)
     else
-      _ -> nil
+      _ -> ""
     end
   end
 
@@ -93,13 +93,17 @@ defmodule MixDocker do
     count   = git_commit_count()
     sha     = git_head_sha()
 
-    Code.eval_string(version_template, mix_version: version, git_count: count, git_sha: sha) |> elem(0)
+    version_template
+    |> String.replace("$mix_version", version)
+    |> String.replace("$git_count", count)
+    |> String.replace("$git_sha", sha)
   end
   defp image_tag(tag), do: tag
 
   defp image_version(args) do
-    version = (OptionParser.parse(args) |> elem(0) |> Keyword.get(:version, Application.get_env(:mix_docker, :version, "\#{mix_version}.\#{git_count}-\#{git_sha}")))
-    "\"" <> version <> "\""
+    OptionParser.parse(args) |> elem(0) |> Keyword.get(:version)
+    || Application.get_env(:mix_docker, :version)
+    || "$mix_version.$git_count-$git_sha"
   end
 
   defp docker(:cp, cid, source, dest) do

@@ -72,19 +72,19 @@ config :hello, Hello.Mailer,
 
 #### How to configure the image version?
 
-By default, the image version uses the following format: `#{mix_version}.#{git_count}-#{git_sha}`
+By default, the image version uses the following format: `$mix_version.$git_count-$git_sha`
 You can provide your own version in `config/prod.exs` like this:
 
 ```elixir
 # config/config.exs
 config :mix_docker,
-  version: "\#{mix_version}_\#{git_sha}"
+  version: "$mix_version_$git_sha"
 ```
 
 Additionally, you can pass the version as an argument to `mix docker.publish` and `mix docker.shipit`:
 
 ```bash
-mix docker.publish --version "#{mix_version}_#{git_sha}"
+mix docker.publish --version "$mix_version_$git_sha"
 ```
 
 
