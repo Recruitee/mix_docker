@@ -63,7 +63,7 @@ defmodule MixDocker do
   end
 
   defp git_head_sha do
-    with true <- File.regular?(".git"),
+    with true <- File.exists?(".git"),
          {sha, 0} <- System.cmd("git", ["rev-parse", "HEAD"]) do
       String.slice(sha, 0, 10)
     else
@@ -72,7 +72,7 @@ defmodule MixDocker do
   end
 
   defp git_commit_count do
-    with true <- File.regular?(".git"),
+    with true <- File.exists?(".git"),
          {count, 0} <- System.cmd("git", ["rev-list", "--count", "HEAD"]) do
       String.trim(count)
     else
