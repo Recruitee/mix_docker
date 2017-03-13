@@ -16,7 +16,7 @@ defmodule MixDocker do
 
   def build(args) do
     with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, image(:build), args
+      docker :build, @dockerfile_build, image(:build), docker_build_args(args)
     end
 
     Mix.shell.info "Docker image #{image(:build)} has been successfully created"
@@ -43,7 +43,7 @@ defmodule MixDocker do
   end
 
   def publish(args) do
-    name = image(version: image_version(args))
+    name = image(version: image_version(mix_args(args)))
 
     docker :tag, image(:release), name
     docker :push, name
@@ -100,10 +100,27 @@ defmodule MixDocker do
   end
   defp image_tag(tag), do: tag
 
-  defp image_version(args) do
-    OptionParser.parse(args) |> elem(0) |> Keyword.get(:version)
+  defp image_version(mix_args) do
+    mix_args |> Keyword.get(:version)
     || Application.get_env(:mix_docker, :version)
     || "$mix_version.$git_count-$git_sha"
+  end
+  
+  @valid_args [:version]
+  defp mix_args(args) do
+    parse_args(args)
+    |> Keyword.take(@valid_args)
+  end
+
+  defp docker_build_args(args) do
+    parse_args(args)
+    |> Keyword.drop(@valid_args)
+    |> OptionParser.to_argv
+  end
+
+  defp parse_args(args) do
+    {parsed, [], []} = OptionParser.parse(args, switches: [label: :keep], allow_nonexistent_atoms: true)
+    parsed
   end
 
   defp docker(:cp, cid, source, dest) do
