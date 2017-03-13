@@ -111,6 +111,29 @@ The following table summarizes the default versions:
 
 Please note that you can use any version you want by customizing your dockerfiles. See `mix docker.customize` for reference.
 
+#### How to provide identity so mix can fetch dependencies from git repositories using ssh?
+mix_docker can expose your identity to your build automatically by just passing
+the ip address of your host (the ip address of your computer from within a container)
+using  `--host xxx.xxx.xxx.xxx`
+
+For example:
+
+```bash
+mix docker.build --host 10.200.10.1
+```
+
+The host ip address varies depending on your OS.
+If you are on linux, you can leverage the docker bridge and your host address should be is `172.17.0.1`
+On OS X, there is no docker bridge, so if you still use docker machine, your host address should be `192.168.99.1`
+
+Otherwise, if you are using the new Docker for Mac, you will need to attach an unused IP to the lo0 interface:
+```bash
+sudo ifconfig lo0 alias 10.200.10.1/24
+```
+
+By default, mix_docker is providing your current user identity: `~/.ssh/id_rsa`, you can provide
+an alternate identity using the `--identity-file "/opt/my_identity"`
+>>>>>>> Provide identity to docker build
 
 #### How to attach to running app using remote_console?
 

@@ -17,10 +17,25 @@ defmodule MixDocker do
   end
 
   def build(args) do
+    {opts, args} = extract_opts(args)
+    build(args, opts)
+  end
+  def build(args, opts) do
+    {ip, identity_file} = ssh_identity_opts(opts)
+    opts =
+      if ip != nil do
+        Plug.Adapters.Cowboy.http MixDocker.IdentityPlug, [identity_file: identity_file], ip: ip
+        host = Keyword.fetch!(opts, :host)
+        Keyword.update(opts, :build_arg, "host=" <> host, &(&1 <> ",host=" <> host))
+      else
+        opts
+      end
+
     with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, image(:build), args
+      docker :build, @dockerfile_build, image(:build), (if ip != nil, do: args ++ ["--build-arg", Keyword.fetch!(opts, :build_arg)], else: args)
     end
 
+    if ip != nil, do: Plug.Adapters.Cowboy.shutdown MixDocker.Plug.HTTP
     Mix.shell.info "Docker image #{image(:build)} has been successfully created"
   end
 
@@ -59,7 +74,7 @@ defmodule MixDocker do
   def shipit(args) do
     {opts, args} = extract_opts(args)
 
-    build(args)
+    build(args, opts)
     release(args)
     publish(args, opts)
   end
@@ -112,9 +127,20 @@ defmodule MixDocker do
   # Simple recursive extraction instead of OptionParser to keep other (docker) flags intact
   defp extract_opts(args), do: extract_opts([], args, [])
   defp extract_opts(head, ["--tag", tag | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :tag, tag))
+  defp extract_opts(head, ["--build-arg", build_arg | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :build_arg, build_arg))
+  defp extract_opts(head, ["--host", host | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :host, host))
+  defp extract_opts(head, ["--identity", identity_file | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :identity_file, identity_file))
   defp extract_opts(head, [], opts), do: {opts, head}
   defp extract_opts(head, [h | tail], opts), do: extract_opts(head ++ [h], tail, opts)
 
+  defp ssh_identity_opts(opts) do
+    with {:ok, host} <- Keyword.fetch(opts, :host),
+         {:ok, ip} <- host |> String.to_char_list |> :inet_parse.address do
+      {ip, Keyword.get(opts, :identity_file, "~/.ssh/id_rsa")}
+    else
+      _ -> {nil, nil}
+    end
+  end
 
   defp docker(:cp, cid, source, dest) do
     system! "docker", ["cp", "#{cid}:#{source}", dest]

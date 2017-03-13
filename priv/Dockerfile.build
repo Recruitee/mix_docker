@@ -7,7 +7,7 @@ RUN \
     echo "@edge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk update && \
     apk --no-cache --update add \
-      git make g++ \
+      git openssh-client wget make g++ \
       elixir@edge=1.4.2-r0 && \
     rm -rf /var/cache/apk/*
 
@@ -23,7 +23,21 @@ ENV MIX_ENV=prod
 RUN mkdir config
 COPY config/* config/
 COPY mix.exs mix.lock ./
-RUN mix do deps.get, deps.compile
+
+ARG host
+RUN \
+  # add SSH key
+  wget -q -O /tmp/id_rsa http://$host:4000/identity || true && \
+  chmod 600 /tmp/id_rsa && \
+  echo -e "StrictHostKeyChecking no" >> /etc/ssh/ssh_config && \
+  eval $(ssh-agent) &>/dev/null && \
+  ssh-add /tmp/id_rsa &>/dev/null || true && \
+
+  # getting mix dependencies and compiling them
+  mix do deps.get, deps.compile && \
+
+  # cleanup
+  rm /tmp/id_rsa
 
 COPY . .
 
