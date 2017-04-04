@@ -70,22 +70,32 @@ config :hello, Hello.Mailer,
   api_key: "${MAILGUN_API_KEY}"
 ```
 
-#### How to configure the image version?
+#### How to configure the image tag?
 
-By default, the image version uses the following format: `$mix_version.$git_count-$git_sha`
-You can provide your own version in `config/prod.exs` like this:
+By default, the image tag uses the following format: `{mix-version}.{git-count}-{git-sha}`
+You can provide your own tag template in `config/prod.exs` like this:
 
 ```elixir
 # config/config.exs
 config :mix_docker,
-  version: "$mix_version_$git_sha"
+  tag: "dev_{mix-version}_{git-sha}"
 ```
 
-Additionally, you can pass the version as an argument to `mix docker.publish` and `mix docker.shipit`:
+Additionally, you can pass the tag as an argument to `mix docker.publish` and `mix docker.shipit`:
 
 ```bash
-mix docker.publish --version "$mix_version_$git_sha"
+mix docker.publish --tag "{mix-version}-{git-branch}"
 ```
+
+See below for a list of possible variables
+
+| Variable         | Description                            |
+|------------------|----------------------------------------|
+| `{mix-version}` | Current project version from `mix.exs` |
+| `{git-sha}`     | Git commit SHA                         |
+| `{git-count}`   | Git commit count                       |
+| `{git-branch}`  | Git branch                             |
+
 
 #### What version of Erlang/Elixir is installed by default?
 The default dockerfiles are based on [bitwalker/alpine-erlang](https://github.com/bitwalker/alpine-erlang) and elixir installed from [apk repository](https://pkgs.alpinelinux.org/packages?name=elixir&branch=&repo=&arch=&maintainer=)

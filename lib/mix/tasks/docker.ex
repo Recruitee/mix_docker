@@ -74,7 +74,11 @@ defmodule Mix.Tasks.Docker.Publish do
 
   ## Examples
 
+      # Just publish
       mix docker.publish
+
+      # Use different tag for published image
+      mix docker.publish --tag "mytag-{mix-version}-{git-branch}"
   """
   defdelegate run(args), to: MixDocker, as: :publish
 end
@@ -89,6 +93,13 @@ defmodule Mix.Tasks.Docker.Shipit do
   This is the same as running
 
       mix do docker.build, docker.release, docker.publish
+
+  You can also pass docker build/publish flags.
+
+  ## Examples
+
+      # Use custom --tag (see docker.publish) and --no-cache for docker build
+      mix docker.shipit --tag my-custom-tag --no-cache
   """
   defdelegate run(args), to: MixDocker, as: :shipit
 end
