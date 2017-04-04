@@ -17,7 +17,7 @@ defmodule App.Mixfile do
   defp deps do
     [
       {:mix_docker, path: "vendor/mix_docker"},
-      {:distillery, "~> 1.1.0"}
+      {:distillery, "~> 1.2"}
     ]
   end
 end

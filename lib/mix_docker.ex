@@ -83,7 +83,12 @@ defmodule MixDocker do
   end
 
   defp tagvar("mix-version") do
-    Mix.Project.get.project[:version]
+    Mix.Project.get.project[:version] || tagvar("rel-version")
+  end
+
+  defp tagvar("rel-version") do
+    {:ok, rel} = Mix.Releases.Release.get(:default)
+    rel.version
   end
 
   defp tagvar("git-sha") do

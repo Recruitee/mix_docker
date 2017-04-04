@@ -89,9 +89,10 @@ mix docker.publish --tag "{mix-version}-{git-branch}"
 
 See below for a list of possible variables
 
-| Variable         | Description                            |
-|------------------|----------------------------------------|
+| Variable        | Description                            |
+|-----------------|----------------------------------------|
 | `{mix-version}` | Current project version from `mix.exs` |
+| `{rel-version}` | Default distillery release version     |
 | `{git-sha}`     | Git commit SHA                         |
 | `{git-count}`   | Git commit count                       |
 | `{git-branch}`  | Git branch                             |
