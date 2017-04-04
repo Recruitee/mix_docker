@@ -16,7 +16,7 @@ defmodule MixDocker do
 
   def build(args) do
     with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, image(:build), args
+      docker :build, @dockerfile_build, image(:build), docker_build_args(args)
     end
 
     Mix.shell.info "Docker image #{image(:build)} has been successfully created"
@@ -42,8 +42,8 @@ defmodule MixDocker do
     Mix.shell.info "  docker run -it --rm #{image(:release)} foreground"
   end
 
-  def publish(_args) do
-    name = image(:version)
+  def publish(args) do
+    name = image(version: image_version(mix_args(args)))
 
     docker :tag, image(:release), name
     docker :push, name
@@ -63,13 +63,21 @@ defmodule MixDocker do
   end
 
   defp git_head_sha do
-    {sha, 0} = System.cmd "git", ["rev-parse", "HEAD"]
-    String.slice(sha, 0, 10)
+    with true <- File.exists?(".git"),
+         {sha, 0} <- System.cmd("git", ["rev-parse", "HEAD"]) do
+      String.slice(sha, 0, 10)
+    else
+      _ -> ""
+    end
   end
 
   defp git_commit_count do
-    {count, 0} = System.cmd "git", ["rev-list", "--count", "HEAD"]
-    String.trim(count)
+    with true <- File.exists?(".git"),
+         {count, 0} <- System.cmd("git", ["rev-list", "--count", "HEAD"]) do
+      String.trim(count)
+    else
+      _ -> ""
+    end
   end
 
   defp image(tag) do
@@ -80,15 +88,40 @@ defmodule MixDocker do
     Application.get_env(:mix_docker, :image) || to_string(Mix.Project.get.project[:app])
   end
 
-  defp image_tag(:version) do
+  defp image_tag(version: version_template) do
     version = Mix.Project.get.project[:version]
     count   = git_commit_count()
     sha     = git_head_sha()
 
-    "#{version}.#{count}-#{sha}"
+    version_template
+    |> String.replace("$mix_version", version)
+    |> String.replace("$git_count", count)
+    |> String.replace("$git_sha", sha)
   end
   defp image_tag(tag), do: tag
 
+  defp image_version(mix_args) do
+    mix_args |> Keyword.get(:version)
+    || Application.get_env(:mix_docker, :version)
+    || "$mix_version.$git_count-$git_sha"
+  end
+  
+  @valid_args [:version]
+  defp mix_args(args) do
+    parse_args(args)
+    |> Keyword.take(@valid_args)
+  end
+
+  defp docker_build_args(args) do
+    parse_args(args)
+    |> Keyword.drop(@valid_args)
+    |> OptionParser.to_argv
+  end
+
+  defp parse_args(args) do
+    {parsed, [], []} = OptionParser.parse(args, switches: [label: :keep], allow_nonexistent_atoms: true)
+    parsed
+  end
 
   defp docker(:cp, cid, source, dest) do
     system! "docker", ["cp", "#{cid}:#{source}", dest]
