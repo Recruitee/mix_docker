@@ -106,6 +106,7 @@ The following table summarizes the default versions:
 |----------------------|----------|----------|------------------------------------|
 | up to `0.3.2`        | `3.4`    | `18.3`   | `elixir@edge` at the time of build |
 | `0.4.0`              | `3.5`    | `19.2`   | `elixir@edge=1.4.1-r0`             |
+| `0.4.1`              | `3.5`    | `19.2`   | `elixir@edge=1.4.2-r0`             |
 
 Please note that you can use any version you want by customizing your dockerfiles. See `mix docker.customize` for reference.
 
