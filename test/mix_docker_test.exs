@@ -16,12 +16,19 @@ defmodule MixDockerTest do
 
   setup do
     inapp do
-      File.rm_rf "rel"
-      File.rm_rf "app.tar.gz"
-      File.rm_rf "deps"
-      File.rm_rf "mix.lock"
-      File.rm_rf "Dockerfile.build"
-      File.rm_rf "Dockerfile.release"
+      File.rm_rf! "rel"
+      File.rm_rf! "app.tar.gz"
+      File.rm_rf! "deps"
+      File.rm_rf! "mix.lock"
+      File.rm_rf! "Dockerfile.build"
+      File.rm_rf! "Dockerfile.release"
+      File.rm_rf! "vendor/mix_docker"
+      File.mkdir_p! "vendor/mix_docker"
+      File.cp_r! "../config",   "vendor/mix_docker/config"
+      File.cp_r! "../deps",     "vendor/mix_docker/deps"
+      File.cp_r! "../lib",      "vendor/mix_docker/lib"
+      File.cp_r! "../priv",     "vendor/mix_docker/priv"
+      File.cp_r! "../mix.exs",  "vendor/mix_docker/mix.exs"
 
       mix "deps.get"
     end

@@ -15,6 +15,9 @@ defmodule App.Mixfile do
   end
 
   defp deps do
-    [{:mix_docker, github: "recruitee/mix_docker", branch: "master"}]
+    [
+      {:mix_docker, path: "vendor/mix_docker"},
+      {:distillery, "~> 1.1.0"}
+    ]
   end
 end
