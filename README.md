@@ -120,6 +120,7 @@ where `CID` is the app container IO and `hello` is the name of your app.
 docker exec -it CID /opt/app/bin/hello remote_console
 ```
 
+#### [Using alternative Dockerfiles](https://github.com/Recruitee/mix_docker/wiki/Alternative-Dockerfiles)
 
 #### How to install additional packages into build/release image?
 
