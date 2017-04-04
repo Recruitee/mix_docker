@@ -1,15 +1,16 @@
-FROM bitwalker/alpine-erlang:6.1
+FROM alpine:3.5
 
-RUN apk update && \
-    apk --no-cache --update add libgcc libstdc++ && \
-    rm -rf /var/cache/apk/*
+RUN apk --no-cache add ncurses-libs
+
+WORKDIR /opt/app/
 
 EXPOSE 4000
-ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true SHELL=/bin/sh
+ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true
 
 ADD ${APP}.tar.gz ./
-RUN chown -R default ./releases
 
+RUN adduser -S default
+RUN chown -R default .
 USER default
 
 ENTRYPOINT ["/opt/app/bin/${APP}"]
