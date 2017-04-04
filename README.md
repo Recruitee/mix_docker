@@ -87,6 +87,18 @@ Additionally, you can pass the version as an argument to `mix docker.publish` an
 mix docker.publish --version "$mix_version_$git_sha"
 ```
 
+#### What version of Erlang/Elixir is installed by default?
+The default dockerfiles are based on [bitwalker/alpine-erlang](https://github.com/bitwalker/alpine-erlang) and elixir installed from [apk repository](https://pkgs.alpinelinux.org/packages?name=elixir&branch=&repo=&arch=&maintainer=)
+
+The following table summarizes the default versions:
+
+| mix_docker version   | alpine   | erlang   | elixir                             |
+|----------------------|----------|----------|------------------------------------|
+| up to `0.3.2`        | `3.4`    | `18.3`   | `elixir@edge` at the time of build |
+| `0.4.0`              | `3.5`    | `19.2`   | `elixir@edge=1.4.1-r0`             |
+
+Please note that you can use any version you want by customizing your dockerfiles. See `mix docker.customize` for reference.
+
 
 #### How to attach to running app using remote_console?
 
