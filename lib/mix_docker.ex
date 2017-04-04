@@ -26,7 +26,7 @@ defmodule MixDocker do
 
   def release(args) do
     app     = app_name()
-    version = app_version()
+    version = app_version() || release_version()
 
     cid = "mix_docker-#{:rand.uniform(1000000)}"
 
@@ -83,12 +83,11 @@ defmodule MixDocker do
   end
 
   defp tagvar("mix-version") do
-    Mix.Project.get.project[:version] || tagvar("rel-version")
+    app_version() || tagvar("rel-version")
   end
 
   defp tagvar("rel-version") do
-    {:ok, rel} = Mix.Releases.Release.get(:default)
-    rel.version
+    release_version()
   end
 
   defp tagvar("git-sha") do
@@ -186,6 +185,11 @@ defmodule MixDocker do
   end
 
   defp app_version do
-    Mix.Project.get.project[:version] || "0.1.0"
+    Mix.Project.get.project[:version]
+  end
+
+  defp release_version do
+    {:ok, rel} = Mix.Releases.Release.get(:default)
+    rel.version
   end
 end
