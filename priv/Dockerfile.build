@@ -20,6 +20,8 @@ WORKDIR /opt/app
 ENV MIX_ENV=prod
 
 # Cache elixir deps
+RUN mkdir config
+COPY config/* config/
 COPY mix.exs mix.lock ./
 RUN mix do deps.get, deps.compile
 
