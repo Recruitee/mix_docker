@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-erlang:6.1
+FROM bitwalker/alpine-erlang:19.2.1b
 
 ENV HOME=/opt/app/ TERM=xterm
 
@@ -8,7 +8,7 @@ RUN \
     apk update && \
     apk --no-cache --update add \
       git make g++ \
-      elixir@edge && \
+      elixir@edge=1.4.1-r0 && \
     rm -rf /var/cache/apk/*
 
 # Install Hex+Rebar
