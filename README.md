@@ -10,18 +10,18 @@ and [distillery](https://github.com/bitwalker/distillery) releases.
 
   1. Add `mix_docker` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:mix_docker, "~> 0.3.0"}]
-    end
-    ```
+```elixir
+def deps do
+  [{:mix_docker, "~> 0.3.0"}]
+end
+```
 
   2. Configure Docker image name
 
-    ```elixir
-    # config/config.exs
-    config :mix_docker, image: "recruitee/hello"
-    ```
+```elixir
+# config/config.exs
+config :mix_docker, image: "recruitee/hello"
+```
 
   3. Run `mix docker.init` to init distillery release configuration
 
