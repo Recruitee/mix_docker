@@ -4,7 +4,7 @@ defmodule MixDocker.Mixfile do
   def project do
     [
       app: :mix_docker,
-      version: "0.4.1",
+      version: "0.4.2",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
