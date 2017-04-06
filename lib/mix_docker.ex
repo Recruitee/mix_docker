@@ -32,7 +32,7 @@ defmodule MixDocker do
       end
 
     with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, image(:build), (if ip != nil, do: args ++ ["--build-arg", Keyword.fetch!(opts, :build_arg)], else: args)
+      docker :build, @dockerfile_build, image(:build), (if Keyword.has_key?(opts, :build_arg), do: args ++ ["--build-arg", Keyword.fetch!(opts, :build_arg)], else: args)
     end
 
     if ip != nil, do: Plug.Adapters.Cowboy.shutdown MixDocker.Plug.HTTP
