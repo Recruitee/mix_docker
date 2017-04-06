@@ -133,7 +133,7 @@ defmodule MixDocker do
   end
 
   defp docker(:push, image, args) do
-    system! "docker", ["push", image, args]
+    system! "docker", ["push"] ++ args ++ [image]
   end
 
   defp docker(:rm, cid) do
