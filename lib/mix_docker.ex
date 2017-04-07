@@ -79,7 +79,7 @@ defmodule MixDocker do
 
   defp make_image_tag(tag) do
     template = tag || Application.get_env(:mix_docker, :tag) || @default_tag_template
-    Regex.replace(~r/\{([a-z-]+)\}/, template, fn _, x -> tagvar(x) end)
+    Regex.replace(~r/\{([a-z0-9-]+)\}/, template, fn _, x -> tagvar(x) end)
   end
 
   defp tagvar("mix-version") do
@@ -90,9 +90,10 @@ defmodule MixDocker do
     release_version()
   end
 
-  defp tagvar("git-sha") do
+  defp tagvar("git-sha"), do: tagvar("git-sha10")
+  defp tagvar("git-sha" <> length) do
     {sha, 0} = System.cmd("git", ["rev-parse", "HEAD"])
-    String.slice(sha, 0, 10)
+    String.slice(sha, 0, String.to_integer(length))
   end
 
   defp tagvar("git-branch") do
