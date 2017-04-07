@@ -93,7 +93,8 @@ See below for a list of possible variables
 |-----------------|----------------------------------------|
 | `{mix-version}` | Current project version from `mix.exs` |
 | `{rel-version}` | Default distillery release version     |
-| `{git-sha}`     | Git commit SHA                         |
+| `{git-sha}`     | Git commit SHA (10 characters)         |
+| `{git-shaN}`    | Git commit SHA (N characters)          |
 | `{git-count}`   | Git commit count                       |
 | `{git-branch}`  | Git branch                             |
 
