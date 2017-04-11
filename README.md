@@ -133,7 +133,6 @@ sudo ifconfig lo0 alias 10.200.10.1/24
 
 By default, mix_docker is providing your current user identity: `~/.ssh/id_rsa`, you can provide
 an alternate identity using the `--identity-file "/opt/my_identity"`
->>>>>>> Provide identity to docker build
 
 #### How to attach to running app using remote_console?
 

@@ -129,7 +129,7 @@ defmodule MixDocker do
   defp extract_opts(head, ["--tag", tag | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :tag, tag))
   defp extract_opts(head, ["--build-arg", build_arg | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :build_arg, build_arg))
   defp extract_opts(head, ["--host", host | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :host, host))
-  defp extract_opts(head, ["--identity", identity_file | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :identity_file, identity_file))
+  defp extract_opts(head, ["--identity-file", identity_file | tail], opts), do: extract_opts(head, tail, Keyword.put(opts, :identity_file, identity_file))
   defp extract_opts(head, [], opts), do: {opts, head}
   defp extract_opts(head, [h | tail], opts), do: extract_opts(head ++ [h], tail, opts)
 
