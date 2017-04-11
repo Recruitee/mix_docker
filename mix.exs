@@ -31,12 +31,14 @@ defmodule MixDocker.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [:logger, :cowboy, :plug]]
   end
 
   defp deps do
     [
       {:distillery, "~> 1.2"},
+      {:cowboy, "~> 1.0.0"},
+      {:plug, "~> 1.0"},
       {:ex_doc, "~> 0.10", only: :dev}
     ]
   end
