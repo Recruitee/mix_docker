@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-erlang:19.2.1b
+FROM bitwalker/alpine-erlang:19.3
 
 ENV HOME=/opt/app/ TERM=xterm
 
