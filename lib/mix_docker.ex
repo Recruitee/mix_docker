@@ -1,9 +1,10 @@
 defmodule MixDocker do
   require Logger
 
-  @dockerfile_path    :code.priv_dir(:mix_docker)
-  @dockerfile_build   Application.get_env(:mix_docker, :dockerfile_build, "Dockerfile.build")
-  @dockerfile_release Application.get_env(:mix_docker, :dockerfile_release, "Dockerfile.release")
+  @dockerfile_path :code.priv_dir(:mix_docker)
+
+  @default_dockerfile_build   "Dockerfile.build"
+  @default_dockerfile_release "Dockerfile.release"
 
   @default_tag_template "{mix-version}.{git-count}-{git-sha}"
 
@@ -17,8 +18,8 @@ defmodule MixDocker do
   end
 
   def build(args) do
-    with_dockerfile @dockerfile_build, fn ->
-      docker :build, @dockerfile_build, image(:build), args
+    with_dockerfile dockerfile_build(), fn ->
+      docker :build, dockerfile_build(), image(:build), args
     end
 
     Mix.shell.info "Docker image #{image(:build)} has been successfully created"
@@ -30,12 +31,12 @@ defmodule MixDocker do
 
     cid = "mix_docker-#{:rand.uniform(1000000)}"
 
-    with_dockerfile @dockerfile_release, fn ->
+    with_dockerfile dockerfile_release(), fn ->
       docker :rm, cid
       docker :create, cid, image(:build)
       docker :cp, cid, "/opt/app/_build/prod/rel/#{app}/releases/#{version}/#{app}.tar.gz", "#{app}.tar.gz"
       docker :rm, cid
-      docker :build, @dockerfile_release, image(:release), args
+      docker :build, dockerfile_release(), image(:release), args
     end
 
     Mix.shell.info "Docker image #{image(:release)} has been successfully created"
@@ -65,8 +66,16 @@ defmodule MixDocker do
   end
 
   def customize([]) do
-    try_copy_dockerfile @dockerfile_build
-    try_copy_dockerfile @dockerfile_release
+    try_copy_dockerfile dockerfile_build()
+    try_copy_dockerfile dockerfile_release()
+  end
+
+  defp dockerfile_build do
+    Application.get_env(:mix_docker, :dockerfile_build, @default_dockerfile_build)
+  end
+
+  defp dockerfile_release do
+    Application.get_env(:mix_docker, :dockerfile_release, @default_dockerfile_release)
   end
 
   defp image(tag) do
