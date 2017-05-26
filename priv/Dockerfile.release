@@ -7,10 +7,10 @@ RUN apk update && \
 ARG MIX_ENV
 ENV MIX_ENV ${MIX_ENV:-prod}
 
-EXPOSE 8443
-ENV PORT=8443 REPLACE_OS_VARS=true SHELL=/bin/sh
+EXPOSE 4000
+ENV PORT=4000 REPLACE_OS_VARS=true SHELL=/bin/sh
 
-ADD mock_push_server.tar.gz ./
+ADD ${APP}.tar.gz ./
 RUN chown -R default ./releases
 RUN mkdir ./var
 RUN chown -R default ./var
@@ -20,4 +20,4 @@ COPY priv priv
 
 USER default
 
-ENTRYPOINT ["/opt/app/bin/mock_push_server"]
+ENTRYPOINT ["/opt/app/bin/${APP}"]
