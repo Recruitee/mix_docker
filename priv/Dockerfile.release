@@ -3,13 +3,21 @@ FROM bitwalker/alpine-erlang:19.3
 RUN apk update && \
     apk --no-cache --update add libgcc libstdc++ && \
     rm -rf /var/cache/apk/*
+    
+ARG MIX_ENV
+ENV MIX_ENV ${MIX_ENV:-prod}
 
-EXPOSE 4000
-ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true SHELL=/bin/sh
+EXPOSE 8443
+ENV PORT=8443 REPLACE_OS_VARS=true SHELL=/bin/sh
 
-ADD ${APP}.tar.gz ./
+ADD mock_push_server.tar.gz ./
 RUN chown -R default ./releases
+RUN mkdir ./var
+RUN chown -R default ./var
+
+COPY priv priv
+
 
 USER default
 
-ENTRYPOINT ["/opt/app/bin/${APP}"]
+ENTRYPOINT ["/opt/app/bin/mock_push_server"]

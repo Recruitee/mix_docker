@@ -16,7 +16,7 @@ defmodule MixDocker do
     Mix.Task.run("release.init", args)
   end
 
-  def build(args) do
+  def build(args \\ []) do
     with_dockerfile @dockerfile_build, fn ->
       docker :build, @dockerfile_build, image(:build), args
     end
@@ -122,7 +122,8 @@ defmodule MixDocker do
   end
 
   defp docker(:build, dockerfile, tag, args) do
-    system! "docker", ["build", "-f", dockerfile, "-t", tag] ++ args ++ ["."]
+
+    system! "docker", ["build", "-f", dockerfile, "-t", tag, "--build-arg",  "MIX_ENV=#{Mix.env}"] ++ args ++ ["."]
   end
 
   defp docker(:create, name, image) do
