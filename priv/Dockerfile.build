@@ -10,7 +10,7 @@ RUN \
     apk update && \
     apk --no-cache --update add \
       git make g++ \
-      elixir@edge && \
+      elixir@edge=1.4.2-r0 && \
     rm -rf /var/cache/apk/*
 
 # Install Hex+Rebar

@@ -12,11 +12,6 @@ ENV PORT=4000 REPLACE_OS_VARS=true SHELL=/bin/sh
 
 ADD ${APP}.tar.gz ./
 RUN chown -R default ./releases
-RUN mkdir ./var
-RUN chown -R default ./var
-
-COPY priv priv
-
 
 USER default
 
