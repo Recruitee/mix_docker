@@ -33,7 +33,7 @@ defmodule MixDocker do
     with_dockerfile @dockerfile_release, fn ->
       docker :rm, cid
       docker :create, cid, image(:build)
-      docker :cp, cid, "/opt/app/_build/#{Mix.env}/rel/#{app}/releases/#{version}/#{app}.tar.gz", "#{app}.tar.gz"
+      docker :cp, cid, "/opt/app/_build/prod/rel/#{app}/releases/#{version}/#{app}.tar.gz", "#{app}.tar.gz"
       docker :rm, cid
       docker :build, @dockerfile_release, image(:release), args
     end
