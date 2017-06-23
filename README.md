@@ -12,7 +12,7 @@ and [distillery](https://github.com/bitwalker/distillery) releases.
 
 ```elixir
 def deps do
-  [{:mix_docker, "~> 0.4.0"}]
+  [{:mix_docker, "~> 0.5.0"}]
 end
 ```
 
