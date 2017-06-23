@@ -1,7 +1,6 @@
 .git
 _build
 cover
-deps
 doc
 test
 tmp
