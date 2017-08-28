@@ -48,7 +48,11 @@ defmodule MixDocker do
     publish(args, opts)
   end
   def publish(args, opts) do
-    name = image(make_image_tag(opts[:tag]))
+    name = 
+      opts[:tag]
+      |> make_image_tag()
+      |> image()
+      |> repository_host_prefix()
 
     docker :tag, image(:release), name
     docker :push, name, args
@@ -80,6 +84,15 @@ defmodule MixDocker do
   defp make_image_tag(tag) do
     template = tag || Application.get_env(:mix_docker, :tag) || @default_tag_template
     Regex.replace(~r/\{([a-z0-9-]+)\}/, template, fn _, x -> tagvar(x) end)
+  end
+
+  defp repository_host_prefix(tag) do
+    host = Application.get_env(:mix_docker, :repository_host) 
+    if host do
+      host <> "/" <> tag
+    else
+      tag
+    end
   end
 
   defp tagvar("mix-version") do
