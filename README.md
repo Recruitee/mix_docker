@@ -70,6 +70,20 @@ config :hello, Hello.Mailer,
   api_key: "${MAILGUN_API_KEY}"
 ```
 
+#### How do I spoecify an image repository?
+
+```bash
+docker login -u user -p password myimages.dockerimagehost.com
+```
+
+```elixir
+# config/config.exs
+config :mix_docker,
+  image: "myimage",
+  repository_host: "myimages.dockerimagehost.com",
+  tag: "prod_{mix-version}_{git-sha}"
+```
+
 #### How to configure the image tag?
 
 By default, the image tag uses the following format: `{mix-version}.{git-count}-{git-sha}`
