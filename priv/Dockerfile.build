@@ -1,6 +1,8 @@
 FROM bitwalker/alpine-erlang:19.3.4
 
 ENV HOME=/opt/app/ TERM=xterm
+ARG MIX_ENV
+ENV MIX_ENV ${MIX_ENV:-prod}
 
 # Install Elixir and basic build dependencies
 RUN \
@@ -17,14 +19,12 @@ RUN mix local.hex --force && \
 
 WORKDIR /opt/app
 
-ENV MIX_ENV=prod
-
 # Cache elixir deps
-RUN mkdir config
+RUN mkdir config       
 COPY config/* config/
 COPY mix.exs mix.lock ./
 RUN mix do deps.get, deps.compile
 
 COPY . .
 
-RUN mix release --env=prod --verbose
+RUN mix release --verbose --env=$MIX_ENV
